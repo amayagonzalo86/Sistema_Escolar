@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Genero } from "src/genero/entities/genero.entity";
+import { Tutor } from "src/tutor/entities/tutor.entity";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Estudiante {
@@ -12,7 +14,7 @@ export class Estudiante {
     @Column()
     nombre: string;
 
-    @Column()
+    @Column('date')
     fechaNacimiento: Date;
 
     @Column()
@@ -28,9 +30,6 @@ export class Estudiante {
     cuilFin: number;
 
     @Column()
-    genero: string;
-
-    @Column()
     direccion: string;
 
     @Column()
@@ -39,10 +38,26 @@ export class Estudiante {
     @Column()
     pais: string;
 
+    @Column({ name:"fk_id_genero" })
+    fk_id_genero: number;
+
     @Column()
     estado: boolean;
 
-    constructor(apellido:string, nombre:string, fechaNacimiento:Date, dni:number, cuilInicio:number, cuilDni:number, cuilFin:number, genero:string, direccion:string, provincia:string, pais:string){
+    @ManyToMany(()=> Tutor, (tutores) =>tutores.estudiantes)
+    @JoinTable({
+        name: "estudiante_tutor",
+        joinColumns: [{ name: "id_estudiante" }], // Nombre del campo de la tabla actual (Estudiante)
+        inverseJoinColumns: [{ name: "id_tutor" }], // Cambia el nombre del campo del Tutor
+      })
+    tutores: Tutor[];
+
+
+    @ManyToOne(()=>Genero, (genero)=>genero.estudiantes)
+    @JoinColumn({ name: "fk_id_genero"})
+    genero: Genero;
+
+    constructor(apellido:string, nombre:string, fechaNacimiento:Date, dni:number, cuilInicio:number, cuilDni:number, cuilFin:number, provincia:string, pais:string, direccion?:string){
         this.apellido = apellido;
         this.nombre = nombre;
         this.fechaNacimiento = fechaNacimiento;
@@ -50,7 +65,6 @@ export class Estudiante {
         this.cuilInicio = cuilInicio;
         this.cuilDni = cuilDni;
         this.cuilFin = cuilFin;
-        this.genero = genero;
         this.direccion = direccion;
         this.provincia = provincia;
         this.pais = pais;
@@ -113,13 +127,13 @@ export class Estudiante {
         this.cuilFin = cuilFin;
     };
 
-    getGenero():string{
-        return this.genero;
-    };
+    setGenero(genero:number):void{
+        this.fk_id_genero = genero;
+    }
 
-    setGenero(genero:string):void{
-        this.genero = genero;
-    };
+    getGenero():number{
+        return this.fk_id_genero;
+    }
 
     getDireccion():string{
         return this.direccion;

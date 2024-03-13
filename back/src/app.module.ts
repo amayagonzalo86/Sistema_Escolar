@@ -3,6 +3,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EstudianteModule } from './estudiante/estudiante.module';
+import { GeneroModule } from './genero/genero.module';
+import { TutorModule } from './tutor/tutor.module';
 
 @Module({
   imports: [ TypeOrmModule.forRoot({
@@ -14,7 +16,7 @@ import { EstudianteModule } from './estudiante/estudiante.module';
     "database":"sistema_escuela_db",
     "entities": [__dirname + "/**/**/**.entity{.ts,.js}"],
     "synchronize": true
-  }), EstudianteModule, 
+  }), EstudianteModule, GeneroModule, TutorModule, 
   
   ],
   controllers: [AppController],
