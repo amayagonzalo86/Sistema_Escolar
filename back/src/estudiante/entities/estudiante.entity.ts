@@ -1,4 +1,5 @@
 import { Genero } from "src/genero/entities/genero.entity";
+import { Matricula } from "src/matricula/entities/matricula.entity";
 import { Tutor } from "src/tutor/entities/tutor.entity";
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -41,6 +42,9 @@ export class Estudiante {
     @Column({ name:"fk_id_genero" })
     fk_id_genero: number;
 
+    @Column({ name:"fk_id_matricula" })
+    fk_id_matricula: number;
+
     @Column()
     estado: boolean;
 
@@ -56,6 +60,10 @@ export class Estudiante {
     @ManyToOne(()=>Genero, (genero)=>genero.estudiantes)
     @JoinColumn({ name: "fk_id_genero"})
     genero: Genero;
+
+    @ManyToOne(()=>Matricula, (matricula)=>matricula.estudiantes)
+    @JoinColumn({ name: "fk_id_matricula"})
+    matricula: Matricula;
 
     constructor(apellido:string, nombre:string, fechaNacimiento:Date, dni:number, cuilInicio:number, cuilDni:number, cuilFin:number, provincia:string, pais:string, direccion?:string){
         this.apellido = apellido;
@@ -133,6 +141,14 @@ export class Estudiante {
 
     getGenero():number{
         return this.fk_id_genero;
+    }
+
+    setMatricula(matricula:number):void{
+        this.fk_id_matricula = matricula;
+    }
+
+    getMatricula():number{
+        return this.fk_id_matricula;
     }
 
     getDireccion():string{
