@@ -1,6 +1,8 @@
+import { Email } from "src/email/entities/email.entity";
 import { Estudiante } from "src/estudiante/entities/estudiante.entity";
 import { Genero } from "src/genero/entities/genero.entity";
-import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Telefono } from "src/telefono/entities/telefono.entity";
+import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Tutor {
@@ -41,17 +43,12 @@ export class Tutor {
     @Column({ nullable: true })
     direccion: string;
 
-    @Column({ nullable: true })
-    codigoArea:number;
-
-    @Column({ nullable: true })
-    numTelefono: number;
-
-    @Column({ nullable: true })
-    email: string;
-
     @Column()
     estado:boolean;
+
+    
+    @Column({ name:"fk_id_email", nullable : true })
+    fk_id_email?: number;
 
     @Column({ name:"fk_id_genero" })
     fk_id_genero: number;
@@ -60,10 +57,18 @@ export class Tutor {
     @JoinColumn({ name: "fk_id_genero"})
     genero: Genero;
 
-    @ManyToMany(()=>Estudiante,(estudiantes)=>estudiantes.tutores)
-    estudiantes: Estudiante[];
+    @ManyToMany(()=>Estudiante,(estudiantes)=>estudiantes.tutores, { nullable : true })
+    estudiantes?: Estudiante[];
 
-    constructor(nombre:string,apellido:string,dni:number, cuil_inicio?:number, cuil_dni?:number, cuil_fin?:number, fechaNacimiento?:Date, ciudadOrigen?:string, provOrigen?:string, paisOrigen?:string, codigoArea?:number,numTelefono?:number,direccion?:string,email?:string){
+    @OneToOne(() => Email, (email) => email.tutor, { nullable: true })
+    @JoinColumn({ name: "fk_id_email"})
+    email?: Email;
+
+    @OneToMany(() => Telefono, (telefono) => telefono.tutor, { nullable: true })
+    @JoinColumn({ name: "fk_id_telefono"})
+    telefono?: Telefono;
+
+    constructor(nombre:string,apellido:string,dni:number, cuil_inicio?:number, cuil_dni?:number, cuil_fin?:number, fechaNacimiento?:Date, ciudadOrigen?:string, provOrigen?:string, paisOrigen?:string,direccion?:string){
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;
@@ -74,10 +79,7 @@ export class Tutor {
         this.ciudadOrigen = ciudadOrigen;
         this.provOrigen = provOrigen;
         this.paisOrigen = paisOrigen;
-        this.codigoArea = codigoArea;
-        this.numTelefono = numTelefono;
         this.direccion = direccion;
-        this.email = email;
         this.estado = true;
     }
 
@@ -103,22 +105,6 @@ export class Tutor {
 
     getDni():number{
         return this.dni;
-    }
-
-    setCodigoArea(codigoArea:number):void{
-        this.codigoArea = codigoArea;
-    }
-
-    getCodigoArea():number{
-        return this.codigoArea;
-    }
-
-    settNumTelefono(numTelefono:number):void{
-        this.numTelefono = numTelefono;
-    }
-
-    getNumTelefono():number{
-        return this.numTelefono;
     }
 
     setDireccion(direccion:string):void{
@@ -147,14 +133,7 @@ export class Tutor {
 
     setPaisOrigen(paisOrigen:string):void{
         this.paisOrigen = paisOrigen;
-    }
-    setEmail(email:string):void{
-        this.email = email;
-    }
-
-    getEmail():string{
-        return this.email;
-    }
+    };
 
     setEstado(estado:boolean):void{
         this.estado = estado;

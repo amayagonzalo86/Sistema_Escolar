@@ -1,7 +1,9 @@
+import { Email } from "src/email/entities/email.entity";
 import { Genero } from "src/genero/entities/genero.entity";
 import { Matricula } from "src/matricula/entities/matricula.entity";
+import { Telefono } from "src/telefono/entities/telefono.entity";
 import { Tutor } from "src/tutor/entities/tutor.entity";
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Estudiante {
@@ -15,55 +17,68 @@ export class Estudiante {
     @Column()
     nombre: string;
 
-    @Column('date')
-    fechaNacimiento: Date;
+    @Column('date', { nullable : true })
+    fechaNacimiento?: Date;
 
     @Column()
     dni: number;
 
-    @Column()
-    cuilInicio: number;
+    @Column({ nullable : true })
+    cuilInicio?: number;
 
-    @Column()
-    cuilDni: number;
+    @Column({ nullable : true })
+    cuilDni?: number;
 
-    @Column()
-    cuilFin: number;
+    @Column({ nullable : true })
+    cuilFin?: number;
 
-    @Column()
-    direccion: string;
+    @Column({ nullable : true })
+    direccion?: string;
 
-    @Column()
-    provincia: string;
+    @Column({ nullable : true })
+    provincia?: string;
 
-    @Column()
-    pais: string;
+    @Column({ nullable : true })
+    pais?: string;
 
     @Column({ name:"fk_id_genero" })
     fk_id_genero: number;
 
-    @Column({ name:"fk_id_matricula" })
-    fk_id_matricula: number;
+    @Column({ name:"fk_id_email",  nullable : true  })
+    fk_id_email?: number;
+
+    @Column({ name:"fk_id_matricula", nullable : true  })
+    fk_id_matricula?: number;
+
+    @Column({ name:"fk_id_telefono",  nullable : true })
+    fk_id_telefono?: number;
 
     @Column()
     estado: boolean;
 
-    @ManyToMany(()=> Tutor, (tutores) =>tutores.estudiantes)
+    @ManyToMany(()=> Tutor, (tutores) =>tutores.estudiantes, { nullable : true })
     @JoinTable({
         name: "estudiante_tutor",
         joinColumns: [{ name: "id_estudiante" }], // Nombre del campo de la tabla actual (Estudiante)
         inverseJoinColumns: [{ name: "id_tutor" }], // Cambia el nombre del campo del Tutor
       })
-    tutores: Tutor[];
+    tutores?: Tutor[];
 
+    @OneToOne(()=>Telefono,(telefono)=>telefono.estudiante, { nullable : true })
+    @JoinColumn({ name: "fk_id_telefono"})
+    telefono?: Telefono;
 
     @ManyToOne(()=>Genero, (genero)=>genero.estudiantes)
     @JoinColumn({ name: "fk_id_genero"})
     genero: Genero;
 
-    @ManyToOne(()=>Matricula, (matricula)=>matricula.estudiantes)
+    @ManyToOne(()=>Matricula, (matricula)=>matricula.estudiantes, { nullable : true })
     @JoinColumn({ name: "fk_id_matricula"})
-    matricula: Matricula;
+    matricula?: Matricula;
+
+    @OneToOne(() => Email, (email) => email.estudiante, { nullable : true })
+    @JoinColumn({ name: "fk_id_email"})
+    email?: Email;
 
     constructor(apellido:string, nombre:string, fechaNacimiento:Date, dni:number, cuilInicio:number, cuilDni:number, cuilFin:number, provincia:string, pais:string, direccion?:string){
         this.apellido = apellido;

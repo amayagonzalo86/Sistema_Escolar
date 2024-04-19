@@ -16,8 +16,8 @@ export class Matricula {
     @Column()
     estado: boolean;
 
-    @OneToMany(()=>Estudiante,(estudiantes)=>estudiantes.matricula)
-    estudiantes: Estudiante[];
+    @OneToMany(()=>Estudiante,(estudiantes)=>estudiantes.matricula, { nullable : true })
+    estudiantes?: Estudiante[];
 
     constructor(folio:number, libro:string){
         this.folio = folio;
